@@ -22,7 +22,7 @@ function sendgrid_integration_reports_global() {
       'spam_report_drops' => $items['spam_report_drops'],
     ];
   }
-  $path = drupal_get_path('module', 'sendgrid_integration_reports');
+  $path = backdrop_get_path('module', 'sendgrid_integration_reports');
   $render = [
     '#attached' => [
       'js' => [
@@ -41,10 +41,10 @@ function sendgrid_integration_reports_global() {
       '#markup' => t(
         'The following reports are the from the Global Statistics provided by Sendgrid. For more comprehensive data, please visit your !dashboard. !cache to ensure the data is current. !settings to alter the time frame of this data.',
         [
-          '!dashboard' => l(t('Sendgrid Dashboard'), 'https://app.sengrid.com/'),
-          '!cache' => l(t('Clear your cache'), 'admin/config/development/performance'),
-          '!settings' => l(t('Change your settings'), 'admin/config/services/sendgrid/reports'),
-        ]
+        '!dashboard' => l(t('Sendgrid Dashboard'), 'https://app.sengrid.com/'),
+        '!cache' => l(t('Clear your cache'), 'admin/config/development/performance'),
+        '!settings' => l(t('Change your settings'), 'admin/config/services/sendgrid/reports'),
+      ]
       ),
     ],
     'volume' => [

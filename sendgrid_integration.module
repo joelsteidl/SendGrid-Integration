@@ -13,7 +13,7 @@ define('SENDGRID_INTEGRATION_EMAIL_REGEX', '/^\s*"?(.+?)"?\s*<\s*([^>]+)\s*>$/')
  * Implements hook_xautoload().
  */
 function sendgrid_integration_xautoload($adapter) {
-  $dir = drupal_get_path('module', 'sendgrid_integration') . '/vendor/composer';
+  $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
   if (file_exists($dir)) {
     $adapter->absolute()->composerDir($dir);
   }
@@ -27,7 +27,7 @@ function sendgrid_integration_menu() {
   $items['admin/config/services/sendgrid'] = [
     'title' => 'SendGrid Settings',
     'description' => 'SendGrid Integration Settings',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => ['sendgrid_integration_admin'],
     'access callback' => 'user_access',
     'access arguments' => ['administer sendgrid settings'],
@@ -43,7 +43,7 @@ function sendgrid_integration_menu() {
   $items['admin/config/services/sendgrid/test'] = [
     'title' => 'SendGrid Test Email Send',
     'description' => 'Send a test email through sendgrid.',
-    'page callback' => 'drupal_get_form',
+    'page callback' => 'backdrop_get_form',
     'page arguments' => ['sendgrid_integration_test'],
     'access callback' => 'user_access',
     'access arguments' => ['administer sendgrid settings'],
@@ -108,7 +108,18 @@ function sendgrid_integration_email_resend($message) {
   $from = $message['from'];
   $send = TRUE;
 
-  drupal_mail($module, $key, $to, $language, $params, $from, $send);
+  backdrop_mail($module, $key, $to, $language, $params, $from, $send);
+}
+
+/**
+ * Implements hook_config_info().
+ */
+function sendgrid_integration_config_info() {
+  $prefixes['sendgrid_integration.settings'] = array(
+    'label' => t('SendGrid Integration settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
 }
 
 /**
@@ -130,11 +141,12 @@ function sendgrid_integration_email_resend($message) {
  * List of bounces.
  */
 function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, $email = NULL) {
+  $config = config('sendgrid_integration.settings');
   // Connection url for bounces.
   // @TODO update to V3.
   $server = "https://sendgrid.com/api/bounces.get.json";
-  $user = variable_get('sendgrid_integration_username', '');
-  $key = variable_get('sendgrid_integration_apikey', '');
+  $user = $config->get('sendgrid_integration_username');
+  $key = $config->get('sendgrid_integration_apikey');
 
   if (isset($start_date) == FALSE || isset($end_date) == FALSE) {
     watchdog('sendgrid_integration', 'Error on calling get_bounches: Missing date parameter', [], WATCHDOG_NOTICE);
@@ -158,7 +170,7 @@ function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, 
     $data['email'] = $email;
   }
 
-  // Options for drupal_http_request.
+  // Options for backdrop_http_request.
   $options = [
     'method' => 'GET',
     'data' => http_build_query($data),
@@ -168,9 +180,9 @@ function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, 
     ],
   ];
 
-  $response = drupal_http_request($server, $options);
+  $response = backdrop_http_request($server, $options);
 
-  $list = drupal_json_decode($response->data);
+  $list = backdrop_json_decode($response->data);
 
   // Check if server returned error messages
   if (isset($list['error'])) {
@@ -204,9 +216,18 @@ function sendgrid_integration_mail($key, &$message, $params) {
     $params['body']
   );
   if ($params['include_test_attachment']) {
-    $message['attachments'][] = drupal_realpath('misc/druplicon.png');
+    $message['attachments'][] = backdrop_realpath('misc/druplicon.png');
   }
   if (isset($params['Reply-To']) && !empty($params['Reply-To'])) {
     $message['headers']['Reply-To'] = $params['Reply-To'];
   }
+}
+
+/**
+ * Implements hook_autoload_info().
+ */
+function sendgrid_integration_autoload_info() {
+  return array(
+    'SendGridMailSystem' => 'inc/sendgrid.mail.inc',
+  );
 }

@@ -1,0 +1,6 @@
+[SendgridIntegrationReportsTestCase]
+name = Sendgrid Integration Reports Tests
+description = Test the function of the generated reports and web services.
+group = Sendgrid Integration
+file = tests/sendgrid_integration_reports.test
+

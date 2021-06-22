@@ -1,8 +1,8 @@
 {
-  "name": "drupal/contrib/sendgrid_integration_reports",
+  "name": "backdrop/sendgrid_integration_reports",
   "description": "Sendgrid Reports Module.",
   "version": "7.x-1.x",
-  "homepage": "https://www.drupal.org/project/sendgrid_integration",
+  "homepage": "https://backdropcms.org/project/sendgrid_integration",
   "license": "GNU",
   "keywords": [
     "SendGrid",

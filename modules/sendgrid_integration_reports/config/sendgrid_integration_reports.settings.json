@@ -1,0 +1,6 @@
+{
+    "_config_name": "sendgrid_integration_reports.settings",
+    "sendgrid_integration_reports_start_date": "",
+    "sendgrid_integration_reports_end_date": "",
+    "sendgrid_integration_reports_aggregated_by": "0"
+}

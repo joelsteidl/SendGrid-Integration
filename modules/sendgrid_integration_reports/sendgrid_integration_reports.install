@@ -16,11 +16,12 @@ function sendgrid_integration_reports_disable() {
  */
 function sendgrid_integration_reports_install() {
   $t = get_t();
-  drupal_set_message($t('You can configure SendGrid settings under Administer > Configuration > !link',
+  backdrop_set_message($t('You can configure SendGrid settings under Administer > Configuration > !link',
     [
-      '!link' => l($t('SendGrid settings'), 'admin/config/system/sendgrid'),
-    ]
+    '!link' => l($t('SendGrid settings'), 'admin/config/system/sendgrid'),
+  ]
   ));
+  // Dynamically generated variable data was detected on the following lines.
 }
 
 /**
@@ -34,8 +35,27 @@ function sendgrid_integration_reports_uninstall() {
  * Implements hook_schema().
  */
 
+/**
+ * @todo Please document this function.
+ * @see http://drupal.org/node/1354
+ */
 function sendgrid_integration_reports_schema() {
   $schema = [];
-  $schema['cache_sendgrid_integration_reports'] = drupal_get_schema_unprocessed('system', 'cache');
+  $schema['cache_sendgrid_integration_reports'] = backdrop_get_schema_unprocessed('system', 'cache');
   return $schema;
+}
+
+/**
+ * Migrate sendgrid_integration_reports variables to config.
+ */
+function sendgrid_integration_reports_update_1000() {
+  $config = config('sendgrid_integration_reports.settings');
+  $config->set('sendgrid_integration_reports_start_date', update_variable_get('sendgrid_integration_reports_start_date', ''));
+  $config->set('sendgrid_integration_reports_end_date', update_variable_get('sendgrid_integration_reports_end_date', ''));
+  $config->set('sendgrid_integration_reports_aggregated_by', update_variable_get('sendgrid_integration_reports_aggregated_by', '0'));
+  $config->save();
+
+  update_variable_del('sendgrid_integration_reports_start_date');
+  update_variable_del('sendgrid_integration_reports_end_date');
+  update_variable_del('sendgrid_integration_reports_aggregated_by');
 }

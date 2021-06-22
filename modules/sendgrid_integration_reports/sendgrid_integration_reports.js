@@ -3,7 +3,7 @@
  */
 
 (function ($) {
-  Drupal.behaviors.sendgrid_integration_reports = {
+  Backdrop.behaviors.sendgrid_integration_reports = {
     attach: function (context, settings) {
       google.load("visualization", "1", {
         packages: ["corechart"],
@@ -12,15 +12,15 @@
 
       function drawCharts() {
         var dataTableVol = new google.visualization.DataTable();
-        dataTableVol.addColumn('datetime', Drupal.t('Date'));
-        dataTableVol.addColumn('number', Drupal.t('Opens'));
-        dataTableVol.addColumn('number', Drupal.t('Clicks'));
-        dataTableVol.addColumn('number', Drupal.t('Delivered'));
+        dataTableVol.addColumn('datetime', Backdrop.t('Date'));
+        dataTableVol.addColumn('number', Backdrop.t('Opens'));
+        dataTableVol.addColumn('number', Backdrop.t('Clicks'));
+        dataTableVol.addColumn('number', Backdrop.t('Delivered'));
 
         var dataTableSpa = new google.visualization.DataTable();
-        dataTableSpa.addColumn('datetime', Drupal.t('Date'));
-        dataTableSpa.addColumn('number', Drupal.t('Spam'));
-        dataTableSpa.addColumn('number', Drupal.t('Spam Drops'));
+        dataTableSpa.addColumn('datetime', Backdrop.t('Date'));
+        dataTableSpa.addColumn('number', Backdrop.t('Spam'));
+        dataTableSpa.addColumn('number', Backdrop.t('Spam Drops'));
 
         for (var key in settings.sendgrid_integration_reports.global) {
           dataTableVol.addRow([
