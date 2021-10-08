@@ -2,11 +2,11 @@
 name = Sendgrid Integration Mail Tests
 description = Test mail functions.
 group = Sendgrid Integration
-file = tests/sendgrid_integration.mail_test.test
+file = sendgrid_integration.mail_test.test
 
 [SendgridIntegrationTestCase]
 name = Sendgrid Integration Tests
 description = Tests core setup functions.
 group = Sendgrid Integration
-file = tests/sendgrid_integration.test
+file = sendgrid_integration.test
 

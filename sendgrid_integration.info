@@ -6,6 +6,3 @@ package = Mail
 configure = admin/config/services/sendgrid
 
 dependencies[] = xautoload
-
-; For the tests the Maillog module is also required.
-test_dependencies[] = maillog
