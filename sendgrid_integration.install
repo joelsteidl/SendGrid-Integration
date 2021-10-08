@@ -39,7 +39,7 @@ function sendgrid_integration_install() {
  */
 function sendgrid_integration_requirements($phase) {
   $requirements = [];
-  $apikey = config_get('sendgrid_integration.settings', 'sendgrid_integration_apikey', NULL);
+  $apikey = config_get('sendgrid_integration.settings', 'sendgrid_integration_apikey');
   switch ($phase) {
     case 'install':
       $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
