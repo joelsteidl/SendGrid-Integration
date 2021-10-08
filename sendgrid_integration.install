@@ -85,17 +85,6 @@ function sendgrid_integration_requirements($phase) {
   return $requirements;
 }
 
-
-/**
- * Implements hook_uninstall().
- */
-function sendgrid_integration_uninstall() {
-  config_clear('sendgrid_integration.settings', 'sendgrid_integration_apikey');
-  config_clear('sendgrid_integration.settings', 'sendgrid_integration_test_defaults');
-  config_clear('sendgrid_integration.settings', 'sendgrid_integration_maillog_log');
-  config_clear('sendgrid_integration.settings', 'sendgrid_integration_maillog_devel');
-}
-
 /**
  * Implements hook_update_last_removed().
  */
