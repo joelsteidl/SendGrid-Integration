@@ -1,7 +1,7 @@
 {
-  "name": "backdrop/sendgrid_integration",
+  "name": "backdropcms/sendgrid_integration",
   "description": "SendGrid Integration Backdrop Module.",
-  "homepage": "https://backdropcms.org/project/sendgrid_integration",
+  "homepage": "https://www.backdropcms.org/project/sendgrid_integration",
   "license": "GNU",
   "keywords": [
     "SendGrid",

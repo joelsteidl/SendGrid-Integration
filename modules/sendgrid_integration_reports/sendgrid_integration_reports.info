@@ -1,6 +1,8 @@
 name = Sendgrid Integration Reports
 description = Sendgrid Reports Module
-dependencies[] = sendgrid_integration
 package = Mail
 backdrop = 1.x
-type = module
+
+files[] = tests/sendgrid_integration_reports.test
+
+dependencies[] = sendgrid_integration

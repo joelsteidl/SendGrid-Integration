@@ -10,6 +10,17 @@
 define('SENDGRID_INTEGRATION_EMAIL_REGEX', '/^\s*"?(.+?)"?\s*<\s*([^>]+)\s*>$/');
 
 /**
+ * Implements hook_config_info().
+ */
+function sendgrid_integration_config_info() {
+  $prefixes['sendgrid_integration.settings'] = array(
+    'label' => t('Sendgrid Integration Settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
  * Implements hook_xautoload().
  */
 function sendgrid_integration_xautoload($adapter) {
@@ -97,17 +108,6 @@ function sendgrid_integration_email_resend($message) {
 }
 
 /**
- * Implements hook_config_info().
- */
-function sendgrid_integration_config_info() {
-  $prefixes['sendgrid_integration.settings'] = array(
-    'label' => t('SendGrid Integration settings'),
-    'group' => t('Configuration'),
-  );
-  return $prefixes;
-}
-
-/**
  * Get list of bounced emails. This is unused and may be come deprecated.
  *
  * @param string $start_date
@@ -126,17 +126,16 @@ function sendgrid_integration_config_info() {
  * List of bounces.
  */
 function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, $email = NULL) {
-  $config = config('sendgrid_integration.settings');
   // Connection url for bounces.
   // @TODO update to V3.
+  $config = config('sendgrid_integration.settings');
   $server = "https://sendgrid.com/api/bounces.get.json";
   $user = $config->get('sendgrid_integration_username');
   $key = $config->get('sendgrid_integration_apikey');
 
   if (isset($start_date) == FALSE || isset($end_date) == FALSE) {
     watchdog('sendgrid_integration', 'Error on calling get_bounches: Missing date parameter', [], WATCHDOG_NOTICE);
-
-    return [];
+    return array();
   }
 
   $data = [
@@ -185,7 +184,7 @@ function sendgrid_integration_parse_address($email) {
     return [$matches[2], $matches[1]];
   }
   else {
-    return [$email, ' '];
+    return array($email, ' ');
   }
 }
 
@@ -201,7 +200,7 @@ function sendgrid_integration_mail($key, &$message, $params) {
     $params['body']
   );
   if ($params['include_test_attachment']) {
-    $message['attachments'][] = backdrop_realpath('misc/druplicon.png');
+    $message['attachments'][] = backdrop_realpath('core/misc/favicon.ico');
   }
   if (isset($params['Reply-To']) && !empty($params['Reply-To'])) {
     $message['headers']['Reply-To'] = $params['Reply-To'];
@@ -212,7 +211,8 @@ function sendgrid_integration_mail($key, &$message, $params) {
  * Implements hook_autoload_info().
  */
 function sendgrid_integration_autoload_info() {
-  return array(
+  $implements = array(
     'SendGridMailSystem' => 'inc/sendgrid.mail.inc',
   );
+  return $implements;
 }
