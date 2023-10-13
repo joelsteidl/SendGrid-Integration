@@ -97,6 +97,7 @@ Current Maintainers
 -------------------
 
 - [Joel Steidl](https://github.com/joelsteidl).
+- [Michael R. Bagnall](https://github.com/ElusiveMind).
 - Seeking additional maintainers.
 
 Credits
