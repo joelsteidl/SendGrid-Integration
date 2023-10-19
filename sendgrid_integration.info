@@ -1,8 +1,8 @@
 name = SendGrid Integration
-description = Provides Sendgrid Integration for the Drupal Mail System
+description = Provides Sendgrid Integration for the Backdrop Mail System
 backdrop = 1.x
-type = module
 package = Mail
 configure = admin/config/services/sendgrid
 
 dependencies[] = xautoload
+dependencies[] = mailsystem

@@ -29,9 +29,9 @@ class SendGridMailSystem implements MailSystemInterface {
    * @return bool
    */
   public function mail(array $message) {
-    $config = config('sendgrid_integration.settings');
-
-    $key_secret = $config->get('sendgrid_integration_apikey');
+    $sendgrid = config('sendgrid_integration.settings');
+    $system = config('system.core');
+    $key_secret = $sendgrid->get('sendgrid_integration_apikey');
     if (empty($key_secret)) {
       // Set a warning int he logs of there is no key.
       watchdog('SendGrid Integration', t('No API Secret key has been set'), [], WATCHDOG_ERROR);
@@ -48,7 +48,7 @@ class SendGridMailSystem implements MailSystemInterface {
     // Create a new SendGrid object.
     $sendgrid = new SendGrid\Client($key_secret, $options);
     $sendgrid_message = new SendGrid\Email();
-    $sitename = config_get('system.core', 'site_name');
+    $sitename = $system->get('site_name');
     // Defining default unique args.
     $unique_args = [
       'id' => $message['id'],
@@ -58,7 +58,7 @@ class SendGridMailSystem implements MailSystemInterface {
     if (strpos($message['id'], 'password')) {
       $sendgrid_message->addFilter('bypass_list_management', 'enable', 1);
     }
-    // If this is a Backdrop Commerce message. Bypass spam filters.
+    // If this is a Drupal Commerce message. Bypass spam filters.
     if (strpos($message['id'], 'commerce')) {
       $sendgrid_message->addFilter('bypass_list_management', 'enable', 1);
     }
@@ -87,7 +87,7 @@ class SendGridMailSystem implements MailSystemInterface {
       $data['fromname'] = $fromaddrarray[1];
     }
     else {
-      $data['from'] = config_get('system.core', 'site_mail');
+      $data['from'] = $system->get('site_mail');
       $data['fromname'] = $sitename;
     }
 
@@ -326,6 +326,13 @@ class SendGridMailSystem implements MailSystemInterface {
         }
       }
     }
+    if (isset($message['params']['attachments']) && !empty($message['params']['attachments'])) {
+      foreach ($message['params']['attachments'] as $attachmentitem) {
+        if (is_file($attachmentitem)) {
+          $attachments[$attachmentitem] = $attachmentitem;
+        }
+      }
+    }
 
     // If we have attachments, add them.
     if (!empty($attachments)) {
@@ -333,7 +340,7 @@ class SendGridMailSystem implements MailSystemInterface {
     }
     // Integration with the Maillog module to use for debugging.
     if (module_exists('maillog')) {
-      if ($config->get('sendgrid_integration_maillog_log')) {
+      if ($sendgrid->get('sendgrid_integration_maillog_log')) {
         $record = new stdClass;
 
         $record->header_message_id = isset($message->MessageID) ? $message->MessageID : NULL;
@@ -341,7 +348,7 @@ class SendGridMailSystem implements MailSystemInterface {
         $record->header_from = $sendgrid_message->getFrom();
         // This returns an array of emails so we have to make a string.
         // @TODO Restore this once the V3 wrapper is availble.
-        $record->header_to = implode(',', $sendgrid_message->getTos());
+        // $record->header_to = implode(',', $sendgrid_message->getTos());
         $record->header_reply_to = $sendgrid_message->getReplyTo();
         $record->header_all = serialize($message['headers']);
         $record->sent_date = REQUEST_TIME;
@@ -440,7 +447,7 @@ class SendGridMailSystem implements MailSystemInterface {
       }
 
       // Display the e-mail using Devel module.
-      if ($config->get('sendgrid_integration_maillog_devel') && function_exists('dpm')) {
+      if ($sendgrid->get('sendgrid_integration_maillog_devel') && function_exists('dpm')) {
         $bodydevel = '';
         // Check Content-Type of message body and get the appropriate content.
         if (!empty($sendgrid_message->getHtml())) {
@@ -487,7 +494,7 @@ class SendGridMailSystem implements MailSystemInterface {
         504,
       ];
       if (in_array($error_code, $codes)) {
-        $queue = BackdropQueue::get('SendGridResendQueue')->createItem($message);
+        $queue = DrupalQueue::get('SendGridResendQueue')->createItem($message);
       }
       return FALSE;
     }
@@ -543,7 +550,7 @@ class SendGridMailSystem implements MailSystemInterface {
   /**
    * Splits the input into parts based on the given boundary.
    *
-   * Swiped from Mail::MimeDecode, with modifications based on Backdrop's coding
+   * Swiped from Mail::MimeDecode, with modifications based on Drupal's coding
    * standards and this bug report: http://pear.php.net/bugs/bug.php?id=6495
    *
    * @param input

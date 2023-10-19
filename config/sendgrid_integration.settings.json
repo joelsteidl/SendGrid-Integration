@@ -1,7 +1,7 @@
 {
     "_config_name": "sendgrid_integration.settings",
     "sendgrid_integration_apikey": "",
-    "sendgrid_integration_maillog_log": true,
-    "sendgrid_integration_maillog_devel": true,
+    "sendgrid_integration_maillog_log": false,
+    "sendgrid_integration_maillog_devel": false,
     "sendgrid_integration_test_defaults": []
 }

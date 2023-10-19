@@ -4,8 +4,8 @@
  * Provides Settings Form.
  */
 function sendgrid_integration_admin() {
-  $config = config('sendgrid_integration.settings');
   $form = [];
+  $config = config('sendgrid_integration.settings');
 
   $form['authentication'] = [
     '#type' => 'fieldset',
@@ -13,7 +13,8 @@ function sendgrid_integration_admin() {
   ];
 
   $requirenewkey = TRUE;
-  if (!empty($config->get('sendgrid_integration_apikey'))) {
+  $apikey = $config->get('sendgrid_integration_apikey');
+  if (!empty($apikey)) {
     $form['authentication']['secretkeynotice'] = [
       '#markup' => t('You have saved a secret key. You may change the key by inputing a new one in the field directly below.'),
     ];
@@ -71,8 +72,11 @@ function sendgrid_integration_admin() {
  * @param $form_state
  */
 function sendgrid_integration_admin_validate($form, &$form_state) {
+  $config = config('sendgrid_integration.settings');
+  $apikey = $config->get('sendgrid_integration_apikey');
+
   // Check for API secret key. If missing throw error.
-  if (empty(config_get('sendgrid_integration.settings', 'sendgrid_integration_apikey')) && empty($form_state['values']['sendgrid_integration_apikey'])) {
+  if (empty($apikey) && empty($form_state['values']['sendgrid_integration_apikey'])) {
     form_set_error('authentication][sendgrid_integration_apikey', t('You have not stored an API Secret Key.'));
   }
 }
@@ -89,33 +93,45 @@ function sendgrid_integration_admin_validate($form, &$form_state) {
  * @return bool
  */
 function sendgrid_integration_admin_submit($form, $form_state) {
+  $config = config('sendgrid_integration.settings');
   if (isset($form_state['values']['sendgrid_integration_maillog_log'])) {
-    config_set('sendgrid_integration.settings', 'sendgrid_integration_maillog_log', check_plain($form_state['values']['sendgrid_integration_maillog_log']));
+    $config->set('sendgrid_integration_maillog_log', check_plain($form_state['values']['sendgrid_integration_maillog_log']));
   }
   if (isset($form_state['values']['sendgrid_integration_maillog_devel'])) {
-    config_set('sendgrid_integration.settings', 'sendgrid_integration_maillog_devel', check_plain($form_state['values']['sendgrid_integration_maillog_devel']));
+    $config->set('sendgrid_integration_maillog_devel', check_plain($form_state['values']['sendgrid_integration_maillog_devel']));
   }
-  $existingkey = config_get('sendgrid_integration.settings', 'sendgrid_integration_apikey');
+  $existingkey = $config->get('sendgrid_integration_apikey');
   if (empty($form_state['values']['sendgrid_integration_apikey']) && !empty($existingkey)) {
     return TRUE;
   }
   if (isset($form_state['values']['sendgrid_integration_apikey']) && !empty($form_state['values']['sendgrid_integration_apikey'])) {
-    config_set('sendgrid_integration.settings', 'sendgrid_integration_apikey', check_plain($form_state['values']['sendgrid_integration_apikey']));
+    $config->set('sendgrid_integration_apikey', check_plain($form_state['values']['sendgrid_integration_apikey']));
+    $config->save();
     backdrop_set_message(t('SendGrid Settings Saved'), 'status', FALSE);
     return TRUE;
   }
-
 }
-
 
 /**
  * Provides a form to send a test email through Sendgrid.
  */
 function sendgrid_integration_test() {
   $form = [];
+  $config = config('sendgrid_integration.settings');
 
-  $defaults = config_get('sendgrid_integration.settings',
-    'sendgrid_integration_test_defaults');
+  $defaults = $config->get('sendgrid_integration_test_defaults');
+  if (empty($defaults)) {
+    $defaults = array(
+      'to' => $config->get('site_mail', 'user@example.com'),
+      'subject' => 'Test Email from SendGrid Module',
+      'body' => [
+        'value' => 'Test Message for SendGrid.',
+      ],
+      'fromname' => '',
+      'toname' => '',
+      'replyto' => '',
+    );
+  };
 
   $defaults['body']['format'] = filter_fallback_format();
   $form['fromname'] = [
@@ -127,7 +143,7 @@ function sendgrid_integration_test() {
   $form['to'] = [
     '#type' => 'textfield',
     '#title' => t('To'),
-    '#default_value' => $defaults['to'],
+    '#default_value' => (!empty($defaults['to'])) ? $defaults['to'] : NULL,
     '#maxlength' => 128,
     '#required' => TRUE,
   ];
@@ -146,7 +162,7 @@ function sendgrid_integration_test() {
   $form['subject'] = [
     '#type' => 'textfield',
     '#title' => t('Subject'),
-    '#default_value' => $defaults['subject'],
+    '#default_value' => (isset($defaults['subject'])) ? $defaults['subject'] : '',
     '#maxlength' => 128,
     '#required' => TRUE,
   ];
@@ -160,8 +176,8 @@ function sendgrid_integration_test() {
     '#type' => 'text_format',
     '#title' => t('Body'),
     '#rows' => 20,
-    '#default_value' => $defaults['body']['value'],
-    '#format' => $defaults['body']['format'],
+    '#default_value' => (isset($defaults['body']['value'])) ? $defaults['body']['value'] : '',
+    '#format' => (isset($defaults['body']['format'])) ? $defaults['body']['format'] : '',
     '#required' => TRUE,
   ];
   $form['submit'] = [
@@ -176,25 +192,28 @@ function sendgrid_integration_test() {
  */
 function sendgrid_integration_test_submit($form, &$form_state) {
   $config = config('sendgrid_integration.settings');
+  $system = config('system.core');
+
   // Create defaults array.
-  $defaults = [
+  $defaults = array(
     'to' => $form_state['values']['to'],
     'subject' => $form_state['values']['subject'],
     'body' => $form_state['values']['body'],
     'toname' => $form_state['values']['toname'],
     'fromname' => $form_state['values']['fromname'],
     'replyto' => $form_state['values']['replyto'],
-  ];
+  );
   // Set the defaults for reuse.
-  config_set('sendgrid_integration.settings', 'sendgrid_integration_test_defaults', $defaults);
-
-  $params = [
+  $config->set('sendgrid_integration_test_defaults', $defaults);
+  $config->save();
+  
+  $params = array(
     'subject' => $form_state['values']['subject'],
     'body' => check_markup(
       $form_state['values']['body']['value'],
       $form_state['values']['body']['format']
     ),
-  ];
+  );
   if (!empty($form_state['values']['replyto'])) {
     $params['Reply-To'] = $form_state['values']['replyto'];
   }
@@ -215,16 +234,16 @@ function sendgrid_integration_test_submit($form, &$form_state) {
   }
   // Attempt to send the email and post a message if it was successful.
   if (!empty($form_state['values']['fromname'])) {
-    $senderfrom = $form_state['values']['fromname'] . ' <' . config_get('system.core', 'site_mail') . '>';
+    $senderfrom = $form_state['values']['fromname'] . ' <' . $system->get('site_mail') . '>';
   }
   else {
-    $senderfrom = config_get('system.core', 'site_mail');
+    $senderfrom = $system->get('site_mail');
   }
   $result = backdrop_mail('sendgrid_integration', 'test', $sendto, language_default(), $params, $senderfrom);
   if (isset($result['result']) && $result['result'] == 'true') {
-    backdrop_set_message(t('SendGrid test email sent from %from to %to.', [
+    backdrop_set_message(t('SendGrid test email sent from %from to %to.', array(
       '%from' => $senderfrom,
       '%to' => $sendto,
-    ]), 'status');
+    )), 'status');
   }
 }

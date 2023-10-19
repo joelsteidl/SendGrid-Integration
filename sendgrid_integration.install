@@ -4,21 +4,39 @@
  * Contains install and update functions for SendGrid Integration
  */
 use SendGrid\Client;
-/**
- * Implemenets hook_enable().
- */
-function sendgrid_integration_enable() {
-  $config = config('system.mail');
-  $config->set('mail_system', ['default-system' => 'SendGridMailSystem']);
-  $config->save();
-}
 
 /**
  * Implements hook_disable().
+ * Lifted from the maillog module. Thanks.
  */
 function sendgrid_integration_disable() {
+  // Get the current mail system config.
   $config = config('system.mail');
-  $config->set('mail_system', ['default-system' => 'DefaultMailSystem']);
+  $mail_system = $config->get();
+
+  // Revert the default config mail config if it is currently set to use
+  // Sendgrid, and any others that are set to Sendgrid can be just deleted so they
+  // revert to the default.
+  $default_class = 'DefaultMailSystem';
+  $sendgrid_class = 'SendGridMailSystem';
+  foreach ($mail_system as $system => $class) {
+    // Look for the default mail handler.
+    if ($system == 'default-system') {
+      // If this is currently using Sendgrid, revert it to the default class.
+      if ($class == $sendgrid_class) {
+        $mail_system[$system] = $default_class;
+      }
+    }
+
+    // For all other mail handlers, just delete them if they're set to Sendgrid
+    // so that the system default handler is used instead.
+    elseif ($class == $sendgrid_class) {
+      unset($mail_system[$system]);
+    }
+  }
+
+  // Update the mail config.
+  $config->setData($mail_system);
   $config->save();
 }
 
@@ -29,8 +47,8 @@ function sendgrid_integration_install() {
   $t = get_t();
   backdrop_set_message($t('You can configure SendGrid settings under Administer > Configuration > !link',
     [
-    '!link' => l($t('SendGrid settings'), 'admin/config/system/sendgrid'),
-  ]
+      '!link' => l($t('SendGrid settings'), 'admin/config/system/sendgrid'),
+    ]
   ));
 }
 
@@ -39,14 +57,15 @@ function sendgrid_integration_install() {
  */
 function sendgrid_integration_requirements($phase) {
   $requirements = [];
-  $apikey = config_get('sendgrid_integration.settings', 'sendgrid_integration_apikey');
+  $config = config('sendgrid_integration.settings');
+  $apikey = $config->get('sendgrid_integration_apikey');
   switch ($phase) {
     case 'install':
       $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
       if (module_exists('xautoload') && file_exists($dir)) {
         xautoload()->adapter->composerDir($dir);
       }
-      if (!class_exists(Client::class)) {
+      if(!class_exists(Client::class)){
         $requirements['sendgrid_integration'] = [
           'title' => t('SendGrid API Wrapper'),
           'value' => t('API Wrapper Library Missing'),
@@ -86,25 +105,16 @@ function sendgrid_integration_requirements($phase) {
 }
 
 /**
- * Implements hook_update_last_removed().
- */
-function sendgrid_integration_update_last_removed() {
-  return 7002;
-}
-
-/**
- * Migrate sendgrid_integration variables to config.
+ * Convert configuration variables to Backdrop configurations.
  */
 function sendgrid_integration_update_1000() {
   $config = config('sendgrid_integration.settings');
   $config->set('sendgrid_integration_apikey', update_variable_get('sendgrid_integration_apikey', ''));
-  $config->set('sendgrid_integration_maillog_log', update_variable_get('sendgrid_integration_maillog_log', TRUE));
-  $config->set('sendgrid_integration_maillog_devel', update_variable_get('sendgrid_integration_maillog_devel', TRUE));
-  $config->set('sendgrid_integration_test_defaults', update_variable_get('sendgrid_integration_test_defaults', []));
-  $config->save();
-
+  $config->set('sendgrid_integration_test_defaults', update_variable_get('sendgrid_integration_test_defaults', ''));
+  $config->set('sendgrid_integration_maillog_log', update_variable_get('sendgrid_integration_maillog_log', ''));
+  $config->set('sendgrid_integration_maillog_devel', update_variable_get('sendgrid_integration_maillog_devel', ''));
   update_variable_del('sendgrid_integration_apikey');
+  update_variable_del('sendgrid_integration_test_defaults');
   update_variable_del('sendgrid_integration_maillog_log');
   update_variable_del('sendgrid_integration_maillog_devel');
-  update_variable_del('sendgrid_integration_test_defaults');
 }
