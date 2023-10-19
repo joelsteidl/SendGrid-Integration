@@ -2,6 +2,7 @@ name = SendGrid Integration
 description = Provides Sendgrid Integration for the Backdrop Mail System
 backdrop = 1.x
 package = Mail
+type = module
 configure = admin/config/services/sendgrid
 
 dependencies[] = xautoload
