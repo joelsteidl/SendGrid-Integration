@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Implements Drupal MailSystemInterface.
+ * Implements Backdrop MailSystemInterface.
  */
 class SendGridMailSystem implements MailSystemInterface {
 
