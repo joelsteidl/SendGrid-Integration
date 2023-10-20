@@ -20,9 +20,8 @@ class SendGridMailSystem implements MailSystemInterface {
     return $message;
   }
 
-
   /**
-   * Implement mail method to send mail via Sendgrid.
+   * Implement mail method to send mail via SendGrid.
    *
    * @param array $message
    *
@@ -627,6 +626,4 @@ class SendGridMailSystem implements MailSystemInterface {
     $output = implode("\n", $part_array);
     return $output;
   }
-
-
 }

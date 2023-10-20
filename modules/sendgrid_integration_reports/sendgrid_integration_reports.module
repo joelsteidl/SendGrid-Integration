@@ -290,8 +290,8 @@ function sendgrid_integration_reports_get_stats($cache_id, $categories = [], $st
   }
   catch (GuzzleHttp\Exception\ClientException $e) {
     $code = filter_xss($e->getCode());
-    watchdog('sendgrid_integration_reports', t('Sendgrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $e], 'WATCHDOG_ERROR', NULL);
-    backdrop_set_message(t('Sendgrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
+    watchdog('sendgrid_integration_reports', t('SendGrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $e], 'WATCHDOG_ERROR', NULL);
+    backdrop_set_message(t('SendGrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
     return FALSE;
   }
   // Sanitize return before using in Backdrop.
@@ -381,8 +381,8 @@ function sendgrid_integration_reports_get_stats_browser($key_secret = NULL) {
   }
   catch (GuzzleHttp\Exception\ClientException $e) {
     $code = filter_xss($e->getCode());
-    watchdog('sendgrid_integration_reports', t('Sendgrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $code], 'WATCHDOG_ERROR');
-    backdrop_set_message(t('Sendgrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
+    watchdog('sendgrid_integration_reports', t('SendGrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $code], 'WATCHDOG_ERROR');
+    backdrop_set_message(t('SendGrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
     return FALSE;
   }
   // Sanitize return before using in Backdrop.
@@ -463,8 +463,8 @@ function sendgrid_integration_reports_get_stats_devices($key_secret = NULL) {
   }
   catch (GuzzleHttp\Exception\ClientException $e) {
     $code = filter_xss($e->getCode());
-    watchdog('sendgrid_integration_reports', t('Sendgrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $code], 'WATCHDOG_ERROR');
-    backdrop_set_message(t('Sendgrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
+    watchdog('sendgrid_integration_reports', t('SendGrid Reports module failed to recieve data. HTTP Error Code @errno'), ['@errno' => $code], 'WATCHDOG_ERROR');
+    backdrop_set_message(t('SendGrid Reports module failed to recieve data. See logs.'), 'error', TRUE);
     return FALSE;
   }
   // Sanitize return before using in Backdrop.

@@ -61,6 +61,9 @@ function hook_sendgrid_integration_unique_args_alter($unique_args, $message) {
  * This hook is invoked before mail is sent, allowing modification of
  * categories.
  *
+ * @param array $message
+ *   An array of the message data.
+ *
  * @param array $categories
  *   An array of categories for Sendgrid statistics.
  *

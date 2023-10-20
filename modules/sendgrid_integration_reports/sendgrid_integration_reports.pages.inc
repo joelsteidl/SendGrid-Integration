@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Provides reports pages for Sendgrid Reports module.
+ * Provides reports pages for SendGrid Reports module.
  */
 
 /**
@@ -39,9 +39,9 @@ function sendgrid_integration_reports_global() {
     ],
     'message' => [
       '#markup' => t(
-        'The following reports are the from the Global Statistics provided by Sendgrid. For more comprehensive data, please visit your !dashboard. !cache to ensure the data is current. !settings to alter the time frame of this data.',
+        'The following reports are the from the Global Statistics provided by SendGrid. For more comprehensive data, please visit your !dashboard. !cache to ensure the data is current. !settings to alter the time frame of this data.',
         [
-          '!dashboard' => l(t('Sendgrid Dashboard'), 'https://app.sengrid.com/'),
+          '!dashboard' => l(t('SendGrid Dashboard'), 'https://app.sengrid.com/'),
           '!cache' => l(t('Clear your cache'), 'admin/config/development/performance'),
           '!settings' => l(t('Change your settings'), 'admin/config/services/sendgrid/reports'),
         ]
