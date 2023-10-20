@@ -33,7 +33,7 @@ Installation
 Documentation
 ------------
 
-Additional documentation is located in [the Wiki](https://github.com/backdrop-contrib/sendgrid_integration/wiki/Documentation).
+Additional documentation is located in [the Wiki](https://github.com/backdrop-contrib/sendgrid_integration/wiki).
 
 Issues
 ------
@@ -45,7 +45,6 @@ Current Maintainers
 
 - [Michael R. Bagnall](https://github.com/ElusiveMind).
 - [Joel Steidl](https://github.com/joelsteidl).
-- [Michael R. Bagnall](https://github.com/ElusiveMind).
 - Seeking additional maintainers.
 
 Credits

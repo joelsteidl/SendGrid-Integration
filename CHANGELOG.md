@@ -1,5 +1,10 @@
-1.x-1.0
--------
+1.x-1.0.2
+---------
+* Corrected links and typographical errors in README.
+* Documentation of hooks and example code
+
+1.x-1.0.1
+---------
 * Ported to Backdrop
 * Corrected some typographical and spelling errors
 * Changed from system variables to Backdrop configuration management
