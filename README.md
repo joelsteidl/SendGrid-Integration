@@ -10,10 +10,18 @@ wrapper library is for V2 of the API. V3 upgrade is being developed.
 Requirements
 ------------
 
-This module requires that the following modules are also enabled:
+This module requires that the following module is also enabled:
 
-* [X Autoload](https://backdropcms.org/project/xautoload)
 * [Mail System](https://backdropcms.org/project/mailsystem)
+
+One of the following two is required:
+
+* [Composer Manager](https://backdropcms.org/project/composer_manager) - if you
+  want to manage libraries across multiple modules with Composer. See the
+  [module's README](https://github.com/backdrop-contrib/composer_manager/blob/1.x-2.x/README.md)
+  for more detailed information.
+* [X Autoload](https://backdropcms.org/project/xautoload) - if you want to use
+  the bundled `vendor/` directory with this module.
 
 Optional
 

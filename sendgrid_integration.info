@@ -5,5 +5,4 @@ package = Mail
 type = module
 configure = admin/config/services/sendgrid
 
-dependencies[] = xautoload
 dependencies[] = mailsystem

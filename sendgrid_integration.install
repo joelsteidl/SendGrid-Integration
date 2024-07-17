@@ -3,6 +3,7 @@
  * @file
  * Contains install and update functions for SendGrid Integration
  */
+
 use SendGrid\Client;
 
 /**
@@ -61,29 +62,32 @@ function sendgrid_integration_requirements($phase) {
   $apikey = $config->get('sendgrid_integration_apikey');
   switch ($phase) {
     case 'install':
-      $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
-      if (module_exists('xautoload') && file_exists($dir)) {
-        xautoload()->adapter->composerDir($dir);
+      if (!module_exists('composer_manager') && module_exists('xautoload')) {
+        // If we're not using Composer, use the bundled version of the library.
+        $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
+        if (module_exists('xautoload') && file_exists($dir)) {
+          xautoload()->adapter->composerDir($dir);
+        }
       }
-      if(!class_exists(Client::class)){
-        $requirements['sendgrid_integration'] = [
-          'title' => t('SendGrid API Wrapper'),
+      break;
+    case 'runtime':
+      if (!class_exists(Client::class)) {
+        $requirements['sendgrid_integration_library'] = [
+          'title' => t('SendGrid Library'),
           'value' => t('API Wrapper Library Missing'),
           'severity' => REQUIREMENT_ERROR,
           'description' => t('You need to install the SendGrid API wrapper via one of the two methods documented in the README.md of the module.'),
         ];
       }
       else {
-        $requirements['sendgrid_integration'] = [
-          'title' => t('SendGrid API Wrapper'),
+        $requirements['sendgrid_integration_library'] = [
+          'title' => t('SendGrid Library'),
           'severity' => REQUIREMENT_OK,
           'value' => t('API wrapper installed.'),
         ];
       }
-      break;
-    case 'runtime':
       if (empty($apikey)) {
-        $requirements['sendgrid_integration'] = [
+        $requirements['sendgrid_integration_api'] = [
           'title' => t('SendGrid Integration Settings'),
           'value' => t('API Key Not Set'),
           'severity' => REQUIREMENT_ERROR,
@@ -93,7 +97,7 @@ function sendgrid_integration_requirements($phase) {
         ];
       }
       else {
-        $requirements['sendgrid_integration'] = [
+        $requirements['sendgrid_integration_api'] = [
           'title' => t('SendGrid Integration Settings'),
           'severity' => REQUIREMENT_OK,
           'value' => t('API Secret Key saved'),
