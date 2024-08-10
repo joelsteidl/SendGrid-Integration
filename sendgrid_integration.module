@@ -24,7 +24,7 @@ function sendgrid_integration_config_info() {
  * Implements hook_xautoload().
  */
 function sendgrid_integration_xautoload($adapter) {
-  if (module_exists('composer_manager')) {
+  if (class_exists(Sendgrid\Client::class)) {
     return;
   }
   $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
@@ -114,19 +114,19 @@ function sendgrid_integration_email_resend($message) {
  * Get list of bounced emails. This is unused and may be come deprecated.
  *
  * @param string $start_date
- * Start date in format of YYYY-MM-DD.
+ *   Start date in format of YYYY-MM-DD.
  *
  * @param string $end_date
- * End date in format of YYYY-MM-DD.
+ *   End date in format of YYYY-MM-DD.
  *
  * @param string $type
- * Optional type, either 'hard' or 'soft'.
+ *   Optional type, either 'hard' or 'soft'.
  *
  * @param string $email
- * Optional email address used to searching for.
+ *   Optional email address used to searching for.
  *
  * @return array
- * List of bounces.
+ *   List of bounces.
  */
 function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, $email = NULL) {
   // Connection url for bounces.
@@ -171,7 +171,7 @@ function sendgrid_integration_get_bounces($start_date, $end_date, $type = NULL, 
 
   $list = backdrop_json_decode($response->data);
 
-  // Check if server returned error messages
+  // Check if server returned error messages.
   if (isset($list['error'])) {
     watchdog('sendgrid_integration ', 'Error while retrieving bounces list: %error', ['%error' => $list['error']], WATCHDOG_NOTICE);
   }
