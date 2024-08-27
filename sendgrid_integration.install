@@ -62,7 +62,7 @@ function sendgrid_integration_requirements($phase) {
   $apikey = $config->get('sendgrid_integration_apikey');
   switch ($phase) {
     case 'install':
-      if (!class_exists(Sendgrid\Client::class)) {
+      if (!class_exists(SendGrid\Client::class)) {
         // If we're not using Composer, try to use the bundled library.
         $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
         if (module_exists('xautoload') && file_exists($dir)) {
@@ -71,7 +71,7 @@ function sendgrid_integration_requirements($phase) {
       }
       break;
     case 'runtime':
-      if (!class_exists(Sendgrid\Client::class)) {
+      if (!class_exists(SendGrid\Client::class)) {
         $requirements['sendgrid_integration_library'] = [
           'title' => t('SendGrid Library'),
           'value' => t('API Wrapper Library Missing'),

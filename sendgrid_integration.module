@@ -24,7 +24,7 @@ function sendgrid_integration_config_info() {
  * Implements hook_xautoload().
  */
 function sendgrid_integration_xautoload($adapter) {
-  if (class_exists(Sendgrid\Client::class)) {
+  if (class_exists(SendGrid\Client::class)) {
     return;
   }
   $dir = backdrop_get_path('module', 'sendgrid_integration') . '/vendor/composer';
