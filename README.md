@@ -14,14 +14,14 @@ This module requires that the following module is also enabled:
 
 * [Mail System](https://backdropcms.org/project/mailsystem)
 
-One of the following two is required:
+The SendGrid library can be loaded in a few possible ways:
 
-* [Composer Manager](https://backdropcms.org/project/composer_manager) - if you
-  want to manage libraries across multiple modules with Composer. See the
+* **Bundled version** - You will need to enable [X Autoload](https://backdropcms.org/project/xautoload)
+  if you want to use the bundled `vendor/` directory with this module.
+* **Manually** - for example with Composer. One example on how to do this is with
+  [Composer Manager](https://backdropcms.org/project/composer_manager). See the
   [module's README](https://github.com/backdrop-contrib/composer_manager/blob/1.x-2.x/README.md)
   for more detailed information.
-* [X Autoload](https://backdropcms.org/project/xautoload) - if you want to use
-  the bundled `vendor/` directory with this module.
 
 Optional
 
