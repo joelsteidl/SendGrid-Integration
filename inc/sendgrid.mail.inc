@@ -97,7 +97,7 @@ class SendGridMailSystem implements MailSystemInterface {
     // This is an array of categories for Sendgrid statistics.
     $categories = [
       $sitename,
-      $message['module'],
+      $message['module'] ? $message['module'] : 'unknown',
       $message['id'],
     ];
 
