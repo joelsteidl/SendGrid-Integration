@@ -28,9 +28,9 @@ class SendGridMailSystem implements MailSystemInterface {
    * @return bool
    */
   public function mail(array $message) {
-    $sendgrid = config('sendgrid_integration.settings');
+    $sendgrid_config = config('sendgrid_integration.settings');
     $system = config('system.core');
-    $key_secret = $sendgrid->get('sendgrid_integration_apikey');
+    $key_secret = $sendgrid_config->get('sendgrid_integration_apikey');
     if (empty($key_secret)) {
       // Set a warning int he logs of there is no key.
       watchdog('SendGrid Integration', t('No API Secret key has been set'), [], WATCHDOG_ERROR);
@@ -339,7 +339,7 @@ class SendGridMailSystem implements MailSystemInterface {
     }
     // Integration with the Maillog module to use for debugging.
     if (module_exists('maillog')) {
-      if ($sendgrid->get('sendgrid_integration_maillog_log')) {
+      if ($sendgrid_config->get('sendgrid_integration_maillog_log')) {
         $record = new stdClass;
 
         $record->header_message_id = isset($message->MessageID) ? $message->MessageID : NULL;
@@ -403,7 +403,6 @@ class SendGridMailSystem implements MailSystemInterface {
           $record->body .= $divider;
         }
 
-
         $record->body .= 'Raw Message' . "\n";
         $record->body .= $divider;
         $record->body .= $message['body'];
@@ -446,7 +445,7 @@ class SendGridMailSystem implements MailSystemInterface {
       }
 
       // Display the e-mail using Devel module.
-      if ($sendgrid->get('sendgrid_integration_maillog_devel') && function_exists('dpm')) {
+      if ($sendgrid_config->get('sendgrid_integration_maillog_devel') && function_exists('dpm')) {
         $bodydevel = '';
         // Check Content-Type of message body and get the appropriate content.
         if (!empty($sendgrid_message->getHtml())) {
@@ -468,7 +467,6 @@ class SendGridMailSystem implements MailSystemInterface {
         dpm($devel_msg, 'maillog');
       }
     }
-
 
     // Lets try and send the message and catch the error.
     try {
