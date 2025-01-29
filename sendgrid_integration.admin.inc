@@ -234,15 +234,15 @@ function sendgrid_integration_test_submit($form, &$form_state) {
   }
   // Attempt to send the email and post a message if it was successful.
   if (!empty($form_state['values']['fromname'])) {
-    $senderfrom = $form_state['values']['fromname'] . ' <' . $system->get('site_mail') . '>';
+    $params['from'] = $form_state['values']['fromname'] . ' <' . $system->get('site_mail') . '>';
   }
   else {
-    $senderfrom = $system->get('site_mail');
+    $params['from'] = $system->get('site_mail');
   }
-  $result = backdrop_mail('sendgrid_integration', 'test', $sendto, language_default(), $params, $senderfrom);
+  $result = backdrop_mail('sendgrid_integration', 'test', $sendto, language_default(), $params);
   if (isset($result['result']) && $result['result'] == 'true') {
     backdrop_set_message(t('SendGrid test email sent from %from to %to.', array(
-      '%from' => $senderfrom,
+      '%from' => $params['from'],
       '%to' => $sendto,
     )), 'status');
   }
