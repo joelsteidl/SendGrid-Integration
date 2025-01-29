@@ -57,7 +57,7 @@ class SendGridMailSystem implements MailSystemInterface {
     if (strpos($message['id'], 'password')) {
       $sendgrid_message->addFilter('bypass_list_management', 'enable', 1);
     }
-    // If this is a Commerce message. Bypass spam filters.
+    // If this is a Drupal Commerce message. Bypass spam filters.
     if (strpos($message['id'], 'commerce')) {
       $sendgrid_message->addFilter('bypass_list_management', 'enable', 1);
     }
@@ -493,7 +493,7 @@ class SendGridMailSystem implements MailSystemInterface {
         504,
       ];
       if (in_array($error_code, $codes)) {
-        $queue = BackdropQueue::get('SendGridResendQueue')->createItem($message);
+        $queue = DrupalQueue::get('SendGridResendQueue')->createItem($message);
       }
       return FALSE;
     }
@@ -549,7 +549,7 @@ class SendGridMailSystem implements MailSystemInterface {
   /**
    * Splits the input into parts based on the given boundary.
    *
-   * Swiped from Mail::MimeDecode, with modifications based on coding
+   * Swiped from Mail::MimeDecode, with modifications based on Drupal's coding
    * standards and this bug report: http://pear.php.net/bugs/bug.php?id=6495
    *
    * @param input
