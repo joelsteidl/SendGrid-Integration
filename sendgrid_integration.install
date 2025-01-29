@@ -110,9 +110,10 @@ function sendgrid_integration_requirements($phase) {
 function sendgrid_integration_update_1000() {
   $config = config('sendgrid_integration.settings');
   $config->set('sendgrid_integration_apikey', update_variable_get('sendgrid_integration_apikey', ''));
-  $config->set('sendgrid_integration_test_defaults', update_variable_get('sendgrid_integration_test_defaults', ''));
-  $config->set('sendgrid_integration_maillog_log', update_variable_get('sendgrid_integration_maillog_log', ''));
-  $config->set('sendgrid_integration_maillog_devel', update_variable_get('sendgrid_integration_maillog_devel', ''));
+  $config->set('sendgrid_integration_test_defaults', update_variable_get('sendgrid_integration_test_defaults', []));
+  $config->set('sendgrid_integration_maillog_log', update_variable_get('sendgrid_integration_maillog_log', false));
+  $config->set('sendgrid_integration_maillog_devel', update_variable_get('sendgrid_integration_maillog_devel', false));
+  $config->save();
   update_variable_del('sendgrid_integration_apikey');
   update_variable_del('sendgrid_integration_test_defaults');
   update_variable_del('sendgrid_integration_maillog_log');
